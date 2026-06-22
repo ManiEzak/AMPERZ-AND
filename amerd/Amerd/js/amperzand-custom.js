@@ -271,4 +271,98 @@ WebFont.load({ google: { families: ["Inter Tight:regular,500,600", "Manrope:regu
       }
     });
 
+/* =========================================================================
+   DYNAMIC INJECTION & MODULARIZATION LOGIC
+   ========================================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. Inject SVG assets
+  if (typeof SVG_ASSETS !== "undefined") {
+    document.querySelectorAll("[data-svg]").forEach(el => {
+      const key = el.getAttribute("data-svg");
+      if (SVG_ASSETS[key]) {
+        el.innerHTML = SVG_ASSETS[key];
+      }
+    });
+  }
+
+  // 2. Generate Marquee logos
+  const marqueeTrack = document.getElementById("marquee-track");
+  if (marqueeTrack && typeof MARQUEE_PARTNERS !== "undefined") {
+    const createGroup = (isAriaHidden) => {
+      const group = document.createElement("div");
+      group.className = "dex-marquee-group";
+      if (isAriaHidden) {
+        group.setAttribute("aria-hidden", "true");
+      }
+      MARQUEE_PARTNERS.forEach(partner => {
+        const img = document.createElement("img");
+        img.src = partner.src;
+        img.alt = partner.alt;
+        img.loading = "lazy";
+        group.appendChild(img);
+      });
+      return group;
+    };
+    marqueeTrack.innerHTML = ""; // Clear placeholders
+    marqueeTrack.appendChild(createGroup(false));
+    marqueeTrack.appendChild(createGroup(true));
+  }
+
+  // 3. Generate Testimonials cards (Success Stories)
+  function renderSuccessCard(story) {
+    const card = document.createElement("div");
+    card.className = `rt-success-card ${story.type || 'banking'}`;
+
+    const iconSvg = SVG_ASSETS[story.iconKey] || '';
+    const arrowSvg = SVG_ASSETS.arrowRight || '';
+
+    const pillsHtml = (story.pills || []).map(pill => `<span class="rt-success-pill">${pill}</span>`).join('\n');
+
+    card.innerHTML = `
+      <div class="rt-success-card-top">
+        <div class="rt-success-card-top-header">
+          <span class="rt-success-badge">${story.category}</span>
+          <div class="rt-success-icon-wrap">
+            ${iconSvg}
+          </div>
+        </div>
+        <div class="rt-success-brand-row">
+          <img src="${story.logo}" class="rt-success-brand-logo" alt="${story.brand} Logo">
+          <span class="rt-success-brand-name">${story.brand}</span>
+        </div>
+        <h4 class="rt-success-card-title">${story.title}</h4>
+      </div>
+      <div class="rt-success-card-bottom">
+        <p class="rt-success-card-desc">${story.desc}</p>
+        <div class="rt-success-pills-row">
+          ${pillsHtml}
+        </div>
+        <a href="#" class="rt-success-read-link">
+          Read Story 
+          ${arrowSvg}
+        </a>
+      </div>
+    `;
+    return card;
+  }
+
+  for (let colNum = 1; colNum <= 3; colNum++) {
+    const colContainer = document.getElementById(`success-col-${colNum}`);
+    if (colContainer && typeof SUCCESS_STORIES !== "undefined") {
+      colContainer.innerHTML = ""; // Clear placeholders
+      const colStories = SUCCESS_STORIES.filter(s => s.column === colNum);
+      
+      // First pass
+      colStories.forEach(story => {
+        colContainer.appendChild(renderSuccessCard(story));
+      });
+      // Second pass (duplicate for infinite loop scrolling)
+      colStories.forEach(story => {
+        colContainer.appendChild(renderSuccessCard(story));
+      });
+    }
+  }
+});
+
   

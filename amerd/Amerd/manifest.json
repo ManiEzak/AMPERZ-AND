@@ -1,0 +1,20 @@
+{
+  "name": "Amperzand — AI Agent Orchestration Platform",
+  "short_name": "Amperzand",
+  "description": "AI Agent Orchestration Platform that automates your entire software delivery pipeline.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#A855F7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./assets/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "en-US"
+}
